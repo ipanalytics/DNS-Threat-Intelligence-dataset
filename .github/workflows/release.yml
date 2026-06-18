@@ -20,7 +20,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - run: uv sync --all-groups
-      - run: uv run python scripts/update_feeds.py --sample --output data
+      - run: uv run python scripts/update_feeds.py --live --output data
       - run: uv run python scripts/update_stats.py --data-dir data --readme README.md
       - run: uv run python -m dnsintel.cli dashboard build --data-dir data --output docs/dashboard
       - run: uv run python scripts/build_release_assets.py --data-dir data --output dist/release
@@ -52,4 +52,3 @@ jobs:
             dist/release/dataset-stats.md \
             --title "DNS Threat Intelligence Dataset ${{ steps.release_tag.outputs.tag }}" \
             --notes-file dist/release/RELEASE_NOTES.md
-

@@ -47,10 +47,10 @@ normalization layer canonicalizes domains, URLs, and IPs, enrichment modules add
 DNS/IP/ASN/RDAP/CT context, and exporters publish lists and structured files for
 downstream systems.
 
-The current repository ships with deterministic fixture-backed data generation
-so CI, releases, and Pages deployments are reproducible without secrets or live
-feed credentials. Live adapters can be enabled source-by-source as operational
-credentials and source terms allow.
+Production workflows collect from live public feeds that do not require
+credentials. Fixture mode is retained for tests, local smoke checks, and adapter
+development; fixture output is not intended to represent threat-intelligence
+coverage.
 
 ---
 
@@ -99,24 +99,24 @@ timestamps, confidence, and a recommended action.
 ## Dataset Stats
 
 <!-- DNSINTEL_STATS_START -->
-_Generated: `2026-06-18T13:54:19.781151+00:00`_
+_Generated: `2026-06-18T14:00:51.416563+00:00`_
 
 | Dataset metric | Count |
 |---|---:|
-| Malicious domains | 1603 |
-| Phishing domains | 702 |
-| Malware domains | 1603 |
-| C2 domains | 401 |
-| Malicious URLs | 1203 |
-| AdGuard DNS rules | 2805 |
+| Malicious domains | 3 |
+| Phishing domains | 2 |
+| Malware domains | 3 |
+| C2 domains | 1 |
+| Malicious URLs | 3 |
+| AdGuard DNS rules | 5 |
 | DGA confirmed domains | 1 |
 | DGA suspected domains | 1 |
 | Fast-flux domains | 1 |
 | Double-flux domains | 1 |
 | Open resolvers | 1 |
 | DNS amplification-risk resolvers | 1 |
-| Normalized domain records | 1603 |
-| Normalized URL records | 1203 |
+| Normalized domain records | 3 |
+| Normalized URL records | 3 |
 | Enriched files | 13 |
 | Reports | 13 |
 <!-- DNSINTEL_STATS_END -->
@@ -134,7 +134,7 @@ cd DNS-Threat-Intelligence-dataset
 
 uv sync --all-groups
 uv run python -m dnsintel.cli config validate
-uv run python scripts/update_feeds.py --sample --output data
+uv run python scripts/update_feeds.py --live --output data
 uv run python scripts/update_stats.py --data-dir data --readme README.md
 uv run python -m dnsintel.cli dashboard build --data-dir data --output docs/dashboard
 ```
@@ -170,7 +170,13 @@ uv run python -m dnsintel.cli config validate
 
 ## Usage Examples
 
-Generate the fixture-backed dataset:
+Collect from live public feeds:
+
+```bash
+uv run python scripts/update_feeds.py --live --output data
+```
+
+Generate the small fixture-backed development snapshot:
 
 ```bash
 uv run python scripts/update_feeds.py --sample --output data
@@ -271,7 +277,8 @@ Core records are represented by Pydantic models under `dnsintel.models`.
 ## Operational Notes
 
 - Live integrations should be enabled per source in `configs/sources.yml`.
-- CI and scheduled workflows use deterministic sample mode by default.
+- CI uses deterministic tests; dataset, Pages, and release workflows use live
+  public feeds by default.
 - Active DNS logic is limited to bounded DNS lookups with timeout, retry, and
   rate-limit controls.
 - CT, NRD, DGA-like lexical signals, and public-code mentions are treated as
@@ -407,4 +414,3 @@ This project publishes defensive DNS threat intelligence artifacts from public
 or user-authorized sources. Operators are responsible for validating source
 terms, tuning false-positive policy, and reviewing blocking decisions before
 production enforcement.
-

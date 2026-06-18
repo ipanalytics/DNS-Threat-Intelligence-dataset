@@ -17,5 +17,5 @@ class SourceResult:
 class SourceAdapter(Protocol):
     name: str
 
-    def collect(self) -> SourceResult:
+    def collect(self, live: bool = False, limit: int | None = None) -> SourceResult:
         """Collect evidence from a fixture, local file, or configured live source."""

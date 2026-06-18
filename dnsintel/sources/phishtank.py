@@ -7,7 +7,8 @@ from dnsintel.sources.fixtures import evidence
 class PhishTankAdapter:
     name = "phishtank"
 
-    def collect(self) -> SourceResult:
+    def collect(self, live: bool = False, limit: int | None = None) -> SourceResult:
+        _ = (live, limit)
         return SourceResult(
             name=self.name,
             evidence=[

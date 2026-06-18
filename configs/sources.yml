@@ -1,11 +1,11 @@
 sources:
   urlhaus:
     enabled: true
-    mode: fixture
+    mode: live
     url: "https://urlhaus.abuse.ch/downloads/json/"
   threatfox:
     enabled: true
-    mode: fixture
+    mode: live
     url: "https://threatfox.abuse.ch/export/json/recent/"
   malwarebazaar:
     enabled: true
@@ -20,7 +20,7 @@ sources:
     mode: fixture
   openphish:
     enabled: true
-    mode: fixture
+    mode: live
   otx:
     enabled: false
     mode: live
@@ -36,4 +36,3 @@ network:
   timeout_seconds: 15
   max_retries: 2
   rate_limit_per_second: 0.5
-

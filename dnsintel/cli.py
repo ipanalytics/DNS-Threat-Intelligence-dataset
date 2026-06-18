@@ -8,7 +8,7 @@ from rich.console import Console
 
 from dnsintel import __version__
 from dnsintel.config import validate_config_dir
-from dnsintel.pipeline import generate_sample_dataset
+from dnsintel.pipeline import generate_dataset, generate_sample_dataset
 
 app = typer.Typer(help="DNS threat intelligence dataset CLI.")
 config_app = typer.Typer(help="Configuration commands.")
@@ -34,6 +34,16 @@ def validate(config_dir: Path = Path("configs")) -> None:
 @app.command("sample-data")
 def sample_data(output: Path = Path("data")) -> None:
     counts = generate_sample_dataset(output)
+    console.print(counts)
+
+
+@app.command("update")
+def update(
+    output: Path = Path("data"),
+    live: bool = typer.Option(False, "--live", help="Collect from live public feeds."),
+    limit_per_source: int | None = typer.Option(None, help="Maximum records per source."),
+) -> None:
+    counts = generate_dataset(output, live=live, limit_per_source=limit_per_source)
     console.print(counts)
 
 

@@ -1,13 +1,20 @@
 from __future__ import annotations
 
+import json
+
+import httpx
+
 from dnsintel.sources.base import SourceResult
 from dnsintel.sources.fixtures import evidence
 
 
 class ThreatFoxAdapter:
     name = "threatfox"
+    url = "https://threatfox.abuse.ch/export/json/recent/"
 
-    def collect(self) -> SourceResult:
+    def collect(self, live: bool = False, limit: int | None = None) -> SourceResult:
+        if live:
+            return self._collect_live(limit=limit)
         return SourceResult(
             name=self.name,
             evidence=[
@@ -24,3 +31,48 @@ class ThreatFoxAdapter:
                 ),
             ],
         )
+
+    def _collect_live(self, limit: int | None = None) -> SourceResult:
+        response = httpx.get(self.url, timeout=30, follow_redirects=True)
+        response.raise_for_status()
+        payload = json.loads(response.text)
+        rows = payload.values() if isinstance(payload, dict) else payload
+        records = []
+        for row in rows:
+            if not isinstance(row, dict):
+                continue
+            value = row.get("ioc_value")
+            ioc_type = str(row.get("ioc_type", "")).lower()
+            if not isinstance(value, str):
+                continue
+            if "url" in ioc_type:
+                indicator_type = "url"
+                category = ["malware"]
+            elif "domain" in ioc_type or "hostname" in ioc_type:
+                indicator_type = "domain"
+                category = ["c2", "malware"]
+            elif "ip" in ioc_type:
+                indicator_type = "ip"
+                category = ["c2"]
+            else:
+                continue
+            confidence_raw = row.get("confidence_level")
+            try:
+                confidence = float(confidence_raw)
+            except (TypeError, ValueError):
+                confidence = 80.0
+            records.append(
+                evidence(
+                    self.name,
+                    indicator_type,
+                    value,
+                    category,
+                    max(0, min(100, confidence)),
+                    tags=row.get("tags") if isinstance(row.get("tags"), list) else [],
+                    malware_family=row.get("malware"),
+                    reference_url=row.get("reference"),
+                )
+            )
+            if limit is not None and len(records) >= limit:
+                break
+        return SourceResult(name=self.name, evidence=records)

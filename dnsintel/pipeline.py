@@ -22,8 +22,11 @@ def evidence_to_indicators(
     urls: list[URLIndicator] = []
     for ev in evidence_records:
         if ev.indicator_type == "url":
-            url = normalize_url(ev.value)
-            domain = extract_domain(url)
+            try:
+                url = normalize_url(ev.value)
+                domain = extract_domain(url)
+            except ValueError:
+                continue
             urls.append(
                 URLIndicator(
                     url=url,
@@ -36,7 +39,10 @@ def evidence_to_indicators(
                 )
             )
         elif ev.indicator_type == "domain":
-            domain = normalize_domain(ev.value)
+            try:
+                domain = normalize_domain(ev.value)
+            except ValueError:
+                continue
             current = by_domain.get(domain)
             if current is None:
                 current = DomainIndicator(domain=domain, etld1=etld1(domain))
@@ -47,9 +53,11 @@ def evidence_to_indicators(
     return [score_domain(item) for item in by_domain.values()], urls
 
 
-def generate_sample_dataset(output: Path) -> dict[str, int]:
+def generate_dataset(
+    output: Path, live: bool = False, limit_per_source: int | None = None
+) -> dict[str, int]:
     output.mkdir(parents=True, exist_ok=True)
-    results = [adapter.collect() for adapter in build_adapters()]
+    results = [adapter.collect(live=live, limit=limit_per_source) for adapter in build_adapters()]
     evidence_records = [item for result in results for item in result.evidence]
     domains, urls = evidence_to_indicators(evidence_records)
 
@@ -90,6 +98,7 @@ def generate_sample_dataset(output: Path) -> dict[str, int]:
         "# Update Summary",
         "",
         f"- generated_at: {iso_now()}",
+        f"- mode: {'live' if live else 'sample'}",
         f"- sources_seen: {len(results)}",
         f"- evidence_records: {len(evidence_records)}",
         f"- domains: {len(domains)}",
@@ -105,6 +114,10 @@ def generate_sample_dataset(output: Path) -> dict[str, int]:
     generate_enrichment_outputs(output)
     write_stats(output)
     return {"evidence": len(evidence_records), "domains": len(domains), "urls": len(urls)}
+
+
+def generate_sample_dataset(output: Path) -> dict[str, int]:
+    return generate_dataset(output, live=False)
 
 
 def generate_enrichment_outputs(output: Path) -> None:
