@@ -84,3 +84,4 @@ Adapters subclass `dnsintel.sources.base.SourceAdapter`, implement `fetch()` or
 fixture loading, and return normalized `Evidence` records. Live adapters must
 support timeouts, rate limits, disabled defaults for authenticated/licensed
 sources, and fixture tests.
+
