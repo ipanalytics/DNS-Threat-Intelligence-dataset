@@ -1,0 +1,6 @@
+# AdGuard DNS filter rules generated from DNS threat intelligence indicators
+||c2-control.evil^
+||login-paypal-security.example.net^
+||malware-download.bad^
+||misp-ioc.bad^
+||wallet-verify.bad^

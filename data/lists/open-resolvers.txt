@@ -1,0 +1,2 @@
+# open resolver fixtures
+8.8.8.8

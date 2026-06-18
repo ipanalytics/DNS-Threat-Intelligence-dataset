@@ -1,0 +1,4 @@
+# malicious URLs
+http://malware-download.bad/payload.exe
+http://wallet-verify.bad/login
+https://login-paypal-security.example.net/signin

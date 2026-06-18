@@ -1,0 +1,17 @@
+domains:
+  - example.com
+  - example.org
+  - localhost
+  - test.com
+shared_infrastructure_patterns:
+  - cloudflare
+  - amazonaws.com
+  - azureedge.net
+  - googleusercontent.com
+  - fastly.net
+  - akamaiedge.net
+  - cloudfront.net
+  - github.io
+  - vercel.app
+  - netlify.app
+

@@ -1,0 +1,18 @@
+confidence_thresholds:
+  low: 20
+  medium: 45
+  high: 70
+  critical: 90
+weights:
+  confirmed_feed: 40
+  phishing_verified: 35
+  c2_family: 45
+  malware_report: 25
+  public_osint: 15
+  ct_candidate: 8
+  nrd_signal: 6
+  dga_suspicion: 10
+penalties:
+  shared_infrastructure: 35
+  benign_popularity: 30
+

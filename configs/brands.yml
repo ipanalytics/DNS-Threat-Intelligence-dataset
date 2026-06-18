@@ -1,0 +1,11 @@
+brands:
+  - name: paypal
+    domains: ["paypal.com"]
+    keywords: ["paypal", "paypaI", "pay-pal"]
+  - name: microsoft
+    domains: ["microsoft.com", "office.com", "live.com"]
+    keywords: ["microsoft", "office365", "outlook"]
+  - name: generic_auth
+    domains: []
+    keywords: ["login", "secure", "verify", "wallet", "support", "account", "auth", "mfa", "2fa", "payment", "invoice", "update", "reset", "customer", "helpdesk"]
+

@@ -1,0 +1,39 @@
+sources:
+  urlhaus:
+    enabled: true
+    mode: fixture
+    url: "https://urlhaus.abuse.ch/downloads/json/"
+  threatfox:
+    enabled: true
+    mode: fixture
+    url: "https://threatfox.abuse.ch/export/json/recent/"
+  malwarebazaar:
+    enabled: true
+    mode: fixture
+    enrichment_only: true
+  feodotracker:
+    enabled: true
+    mode: fixture
+    allow_empty: true
+  phishtank:
+    enabled: true
+    mode: fixture
+  openphish:
+    enabled: true
+    mode: fixture
+  otx:
+    enabled: false
+    mode: live
+    requires_token: true
+  misp:
+    enabled: true
+    mode: fixture
+  cert_pl:
+    enabled: false
+    mode: live
+    requires_authorization: true
+network:
+  timeout_seconds: 15
+  max_retries: 2
+  rate_limit_per_second: 0.5
+

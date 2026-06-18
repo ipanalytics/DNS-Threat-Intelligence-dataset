@@ -1,0 +1,13 @@
+.DS_Store
+.venv/
+.uv-cache/
+.pytest_cache/
+.ruff_cache/
+.supergoal/
+__pycache__/
+*.py[cod]
+*.db
+*.duckdb
+*.parquet.tmp
+dist/
+build/

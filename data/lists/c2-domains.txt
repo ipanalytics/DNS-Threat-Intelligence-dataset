@@ -1,0 +1,2 @@
+# C2 domains
+c2-control.evil

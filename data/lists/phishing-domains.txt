@@ -1,0 +1,3 @@
+# phishing domains
+login-paypal-security.example.net
+wallet-verify.bad

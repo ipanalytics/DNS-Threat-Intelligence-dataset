@@ -1,0 +1,38 @@
+sources:
+  - The DFIR Report
+  - Malwarebytes Labs
+  - Microsoft Threat Intelligence
+  - Google Threat Analysis Group
+  - Mandiant
+  - Cisco Talos
+  - Palo Alto Unit 42
+  - Proofpoint
+  - ESET Research
+  - Kaspersky Securelist
+  - Trend Micro Research
+  - Sekoia
+  - CERT-UA
+  - CERT-PL
+  - CISA advisories
+  - NCSC advisories
+  - JPCERT
+  - Fortinet FortiGuard Labs
+  - Sophos X-Ops
+  - SentinelOne Labs
+  - Check Point Research
+  - Akamai Security Intelligence
+  - Cloudflare Security Blog
+  - Zscaler ThreatLabz
+  - Trellix
+  - CrowdStrike blog
+  - Red Canary
+  - Elastic Security Labs
+  - WithSecure Labs
+  - Huntress
+  - ANY.RUN public reports when license allows
+  - Recorded Future public blog only
+  - Splunk Threat Research Team
+  - SANS ISC diary
+  - BleepingComputer IOC references where legally usable
+  - GitHub public IOC collections
+

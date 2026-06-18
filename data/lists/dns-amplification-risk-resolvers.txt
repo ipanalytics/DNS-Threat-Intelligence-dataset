@@ -1,0 +1,2 @@
+# DNS amplification risk fixtures
+9.9.9.9

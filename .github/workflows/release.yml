@@ -1,0 +1,55 @@
+name: dataset-release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Release tag. Leave empty for dataset-YYYYMMDD-HHMM."
+        required: false
+        type: string
+  schedule:
+    - cron: "37 4 * * *"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --all-groups
+      - run: uv run python scripts/update_feeds.py --sample --output data
+      - run: uv run python scripts/update_stats.py --data-dir data --readme README.md
+      - run: uv run python -m dnsintel.cli dashboard build --data-dir data --output docs/dashboard
+      - run: uv run python scripts/build_release_assets.py --data-dir data --output dist/release
+      - name: Resolve release tag
+        id: release_tag
+        shell: bash
+        run: |
+          if [ -n "${{ inputs.tag }}" ]; then
+            echo "tag=${{ inputs.tag }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "tag=dataset-$(date -u +'%Y%m%d-%H%M')" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Create GitHub Release with dataset assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.release_tag.outputs.tag }}" \
+            dist/release/adguard-dns-filter.txt \
+            dist/release/malicious-domains.txt \
+            dist/release/phishing-domains.txt \
+            dist/release/malware-domains.txt \
+            dist/release/c2-domains.txt \
+            dist/release/malicious-urls.txt \
+            dist/release/domains.jsonl \
+            dist/release/urls.jsonl \
+            dist/release/dnsintel-lists.zip \
+            dist/release/dnsintel-enriched.zip \
+            dist/release/dataset-stats.json \
+            dist/release/dataset-stats.md \
+            --title "DNS Threat Intelligence Dataset ${{ steps.release_tag.outputs.tag }}" \
+            --notes-file dist/release/RELEASE_NOTES.md
+

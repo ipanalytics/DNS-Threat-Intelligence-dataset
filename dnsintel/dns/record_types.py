@@ -1,0 +1,1 @@
+SUPPORTED_RECORD_TYPES = {"A", "AAAA", "NS", "MX", "CNAME", "TXT", "SOA"}

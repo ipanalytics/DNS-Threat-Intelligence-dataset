@@ -1,0 +1,29 @@
+name: build-dataset-artifacts
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v5
+      - run: uv sync --all-groups
+      - run: uv run python scripts/update_feeds.py --sample --output data
+      - run: uv run python scripts/generate_lists.py --input data --output data
+      - run: uv run python scripts/update_stats.py --data-dir data --readme README.md
+      - run: uv run python -m dnsintel.cli dashboard build --data-dir data --output docs/dashboard
+      - name: Upload dataset artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: dnsintel-dataset
+          path: |
+            data/
+            docs/dashboard/
+            README.md
+

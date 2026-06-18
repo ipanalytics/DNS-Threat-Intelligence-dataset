@@ -1,0 +1,4 @@
+# malicious domains
+c2-control.evil
+malware-download.bad
+misp-ioc.bad

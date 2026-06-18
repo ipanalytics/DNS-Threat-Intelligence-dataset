@@ -1,0 +1,2 @@
+# double flux domains
+flux.bad

@@ -1,0 +1,2 @@
+# CT suspicious domains
+login-paypal-security.example.net
