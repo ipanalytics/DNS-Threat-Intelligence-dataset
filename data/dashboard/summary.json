@@ -1,8 +1,8 @@
 {
-  "c2_domains": 1,
+  "c2_domains": 401,
   "fast_flux_domains": 1,
-  "malicious_domains": 3,
-  "malware_domains": 3,
+  "malicious_domains": 1603,
+  "malware_domains": 1603,
   "open_resolvers": 1,
-  "phishing_domains": 2
+  "phishing_domains": 702
 }

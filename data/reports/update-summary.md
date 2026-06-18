@@ -1,10 +1,10 @@
 # Update Summary
 
-- generated_at: 2026-06-18T13:43:30.470240+00:00
-- sources_seen: 9
-- evidence_records: 8
-- domains: 3
-- urls: 3
+- generated_at: 2026-06-18T13:54:12.462911+00:00
+- sources_seen: 10
+- evidence_records: 2808
+- domains: 1603
+- urls: 1203
 
 ## Skipped Or Empty Sources
 - feodotracker: fixture feed empty

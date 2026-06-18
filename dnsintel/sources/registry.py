@@ -9,6 +9,7 @@ from dnsintel.sources.misp import MISPAdapter
 from dnsintel.sources.openphish import OpenPhishAdapter
 from dnsintel.sources.otx import OTXAdapter
 from dnsintel.sources.phishtank import PhishTankAdapter
+from dnsintel.sources.sample_corpus import SampleCorpusAdapter
 
 
 def build_adapters() -> list[object]:
@@ -22,4 +23,5 @@ def build_adapters() -> list[object]:
         OTXAdapter(),
         MISPAdapter(),
         CertPLAdapter(),
+        SampleCorpusAdapter(),
     ]
