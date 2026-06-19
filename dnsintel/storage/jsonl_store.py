@@ -15,6 +15,8 @@ def write_jsonl(path: Path, records: Iterable[BaseModel | dict]) -> int:
             payload = record.model_dump(mode="json") if isinstance(record, BaseModel) else record
             handle.write(json.dumps(payload, sort_keys=True) + "\n")
             count += 1
+        if count == 0:
+            handle.write("\n")
     return count
 
 
