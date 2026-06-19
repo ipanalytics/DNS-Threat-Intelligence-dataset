@@ -1,2 +1,1 @@
 # fast flux domains
-flux.bad

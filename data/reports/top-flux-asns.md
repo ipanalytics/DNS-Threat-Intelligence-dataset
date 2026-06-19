@@ -1,3 +1,3 @@
 # Top Flux ASNs
 
-- AS64550: fixture flux activity
+No flux ASN aggregation was emitted for this run.

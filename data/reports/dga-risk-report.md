@@ -1,3 +1,3 @@
 # DGA Risk Report
 
-Confirmed and suspected DGA domains are separated.
+No DGA candidates were emitted for this run.

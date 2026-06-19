@@ -1,2 +1,1 @@
 # CT brand candidates
-login-paypal-security.example.net

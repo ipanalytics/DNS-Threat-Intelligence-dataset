@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import json
+from json import JSONDecodeError
 
 import httpx
 
@@ -33,9 +33,21 @@ class ThreatFoxAdapter:
         )
 
     def _collect_live(self, limit: int | None = None) -> SourceResult:
-        response = httpx.get(self.url, timeout=30, follow_redirects=True)
-        response.raise_for_status()
-        payload = json.loads(response.text)
+        try:
+            response = httpx.get(
+                self.url,
+                timeout=30,
+                follow_redirects=True,
+                headers={"Accept": "application/json"},
+            )
+            response.raise_for_status()
+            payload = response.json()
+        except (httpx.HTTPError, JSONDecodeError, ValueError) as exc:
+            return SourceResult(
+                name=self.name,
+                skipped=True,
+                reason=f"live fetch failed: {exc.__class__.__name__}: {exc}",
+            )
         rows = payload.values() if isinstance(payload, dict) else payload
         records = []
         for row in rows:
@@ -69,6 +81,7 @@ class ThreatFoxAdapter:
                     category,
                     max(0, min(100, confidence)),
                     tags=row.get("tags") if isinstance(row.get("tags"), list) else [],
+                    source_type="feed",
                     malware_family=row.get("malware"),
                     reference_url=row.get("reference"),
                 )

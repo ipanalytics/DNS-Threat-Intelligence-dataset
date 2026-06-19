@@ -1,3 +1,3 @@
 # Resolver Abuse Report
 
-No internet-wide scanning is performed.
+No resolver scan data is emitted by this pipeline.

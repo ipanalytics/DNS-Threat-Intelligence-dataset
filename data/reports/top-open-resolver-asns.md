@@ -1,3 +1,3 @@
 # Top Open Resolver ASNs
 
-- Fixture data only.
+No open resolver ASN aggregation was emitted for this run.

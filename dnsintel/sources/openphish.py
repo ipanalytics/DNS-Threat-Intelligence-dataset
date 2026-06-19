@@ -28,8 +28,15 @@ class OpenPhishAdapter:
         )
 
     def _collect_live(self, limit: int | None = None) -> SourceResult:
-        response = httpx.get(self.url, timeout=30, follow_redirects=True)
-        response.raise_for_status()
+        try:
+            response = httpx.get(self.url, timeout=30, follow_redirects=True)
+            response.raise_for_status()
+        except httpx.HTTPError as exc:
+            return SourceResult(
+                name=self.name,
+                skipped=True,
+                reason=f"live fetch failed: {exc.__class__.__name__}: {exc}",
+            )
         records = []
         for line in response.text.splitlines():
             url = line.strip()
@@ -43,6 +50,7 @@ class OpenPhishAdapter:
                     ["phishing"],
                     82,
                     tags=["openphish"],
+                    source_type="feed",
                     reference_url=self.url,
                 )
             )

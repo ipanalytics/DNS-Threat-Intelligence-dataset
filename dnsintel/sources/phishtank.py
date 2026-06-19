@@ -8,7 +8,13 @@ class PhishTankAdapter:
     name = "phishtank"
 
     def collect(self, live: bool = False, limit: int | None = None) -> SourceResult:
-        _ = (live, limit)
+        _ = limit
+        if live:
+            return SourceResult(
+                name=self.name,
+                skipped=True,
+                reason="live feed requires a configured PhishTank data source",
+            )
         return SourceResult(
             name=self.name,
             evidence=[

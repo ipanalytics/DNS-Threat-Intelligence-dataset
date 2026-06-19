@@ -1,3 +1,3 @@
 # CT Early Warning Report
 
-CT candidates require review without corroboration.
+No CT candidates were emitted for this run.

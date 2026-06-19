@@ -1,3 +1,3 @@
 # NRD Risk Report
 
-NRD is treated as risk context only.
+No NRD candidates were emitted for this run.

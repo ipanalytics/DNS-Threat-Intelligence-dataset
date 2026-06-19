@@ -1,1 +1,0 @@
-{"domain": "flux.bad", "flux_confidence": "high", "flux_score": 95.0, "flux_type": "double_flux", "reason_codes": ["many_ips", "many_asns", "many_countries", "low_ttl", "ns_churn"]}

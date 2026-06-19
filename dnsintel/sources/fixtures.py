@@ -11,9 +11,10 @@ def evidence(
     confidence: float,
     **raw: object,
 ) -> Evidence:
+    source_type = raw.pop("source_type", "fixture")
     return Evidence(
         source_name=source,
-        source_type="fixture",
+        source_type=source_type if isinstance(source_type, str) else "fixture",
         indicator_type=indicator_type,  # type: ignore[arg-type]
         value=value,
         category=category,

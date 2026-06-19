@@ -87,7 +87,7 @@ timestamps, confidence, and a recommended action.
 |---|---|
 | Feed ingestion | URLhaus, ThreatFox, MalwareBazaar metadata, FeodoTracker, PhishTank, OpenPhish, MISP-style feeds, CERT-style feeds |
 | Normalization | URL parsing, domain extraction, IDN/punycode handling, eTLD+1 approximation, IP validation, defang/refang support |
-| Enrichment | Safe DNS resolver, TTL capture, domain-IP links, ASN/prefix/Geo/RDAP fixtures, shared infrastructure detection |
+| Enrichment | Safe DNS resolver, TTL capture, domain-IP links, ASN/prefix/Geo/RDAP context, shared infrastructure detection |
 | Detection context | DGA lexical scoring, NRD risk signal, CT suspicious pattern detection, popularity baseline, fast-flux scoring |
 | Resolver intelligence | Open resolver and DNS amplification-risk feed processing from configured/legal sources |
 | OSINT/report parsing | Public IOC extraction for domains, URLs, IPs, hashes, CVEs, malware families, campaigns, and short evidence snippets |
@@ -99,24 +99,24 @@ timestamps, confidence, and a recommended action.
 ## Dataset Stats
 
 <!-- DNSINTEL_STATS_START -->
-_Generated: `2026-06-18T14:00:51.416563+00:00`_
+_Generated: `2026-06-19T06:20:37.698697+00:00`_
 
 | Dataset metric | Count |
 |---|---:|
-| Malicious domains | 3 |
-| Phishing domains | 2 |
-| Malware domains | 3 |
-| C2 domains | 1 |
-| Malicious URLs | 3 |
-| AdGuard DNS rules | 5 |
-| DGA confirmed domains | 1 |
-| DGA suspected domains | 1 |
-| Fast-flux domains | 1 |
-| Double-flux domains | 1 |
-| Open resolvers | 1 |
-| DNS amplification-risk resolvers | 1 |
-| Normalized domain records | 3 |
-| Normalized URL records | 3 |
+| Malicious domains | 0 |
+| Phishing domains | 263 |
+| Malware domains | 0 |
+| C2 domains | 0 |
+| Malicious URLs | 300 |
+| AdGuard DNS rules | 263 |
+| DGA confirmed domains | 0 |
+| DGA suspected domains | 0 |
+| Fast-flux domains | 0 |
+| Double-flux domains | 0 |
+| Open resolvers | 0 |
+| DNS amplification-risk resolvers | 0 |
+| Normalized domain records | 0 |
+| Normalized URL records | 300 |
 | Enriched files | 13 |
 | Reports | 13 |
 <!-- DNSINTEL_STATS_END -->
@@ -393,8 +393,8 @@ uv run python -m compileall dnsintel scripts
 
 ## Limitations
 
-- The checked-in dataset is fixture-backed until live sources are explicitly
-  configured.
+- The checked-in dataset is generated from public live feeds available at build
+  time; fixture mode is reserved for tests and local adapter development.
 - Some commercial or registration-gated sources are represented as disabled
   adapters or optional integration points.
 - Public feed schemas can change; adapters should be tested against fixtures and

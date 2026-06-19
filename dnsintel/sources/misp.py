@@ -8,7 +8,13 @@ class MISPAdapter:
     name = "misp"
 
     def collect(self, live: bool = False, limit: int | None = None) -> SourceResult:
-        _ = (live, limit)
+        _ = limit
+        if live:
+            return SourceResult(
+                name=self.name,
+                skipped=True,
+                reason="live MISP export requires configured instance credentials",
+            )
         return SourceResult(
             name=self.name,
             evidence=[evidence("misp", "domain", "misp-ioc.bad", ["malware"], 76, event="fixture")],

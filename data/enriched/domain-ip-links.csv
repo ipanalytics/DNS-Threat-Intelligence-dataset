@@ -1,3 +1,0 @@
-asn,bgp_prefix,country,domain,ip,record_type,resolver,ttl
-64550,203.0.113.0/24,ZZ,c2-control.evil,203.0.113.50,A,fixture,120
-64501,198.51.100.0/24,US,login-paypal-security.example.net,198.51.100.10,A,fixture,300

@@ -1,2 +1,1 @@
 # NRD risk domains
-fresh-wallet-login.bad

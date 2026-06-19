@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import json
+from json import JSONDecodeError
 
 import httpx
 
@@ -10,7 +10,7 @@ from dnsintel.sources.fixtures import evidence
 
 class URLhausAdapter:
     name = "urlhaus"
-    url = "https://urlhaus.abuse.ch/downloads/json/"
+    url = "https://urlhaus.abuse.ch/downloads/json_recent/"
 
     def collect(self, live: bool = False, limit: int | None = None) -> SourceResult:
         if live:
@@ -31,9 +31,21 @@ class URLhausAdapter:
         return SourceResult(name=self.name, evidence=records)
 
     def _collect_live(self, limit: int | None = None) -> SourceResult:
-        response = httpx.get(self.url, timeout=30, follow_redirects=True)
-        response.raise_for_status()
-        payload = json.loads(response.text)
+        try:
+            response = httpx.get(
+                self.url,
+                timeout=30,
+                follow_redirects=True,
+                headers={"Accept": "application/json"},
+            )
+            response.raise_for_status()
+            payload = response.json()
+        except (httpx.HTTPError, JSONDecodeError, ValueError) as exc:
+            return SourceResult(
+                name=self.name,
+                skipped=True,
+                reason=f"live fetch failed: {exc.__class__.__name__}: {exc}",
+            )
         records = []
         seen_domains: set[str] = set()
         rows = payload.values() if isinstance(payload, dict) else payload
@@ -52,6 +64,7 @@ class URLhausAdapter:
                         ["malware"],
                         90,
                         tags=tags,
+                        source_type="feed",
                         source_status=row.get("url_status"),
                         threat=row.get("threat"),
                         reference_url=row.get("urlhaus_reference"),
@@ -67,6 +80,7 @@ class URLhausAdapter:
                         ["malware"],
                         85,
                         tags=tags,
+                        source_type="feed",
                         threat=row.get("threat"),
                         reference_url=row.get("urlhaus_reference"),
                     )

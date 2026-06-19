@@ -1,3 +1,3 @@
 # Top Malicious ASNs
 
-- AS64550 Fixture Threat Network: 1 domain
+ASN enrichment is not emitted without resolver or RDAP evidence.

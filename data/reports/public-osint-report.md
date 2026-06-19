@@ -1,3 +1,3 @@
 # Public OSINT Report
 
-Only public IOC/security-report contexts are allowed.
+No public OSINT enrichment was emitted for this run.
