@@ -74,25 +74,46 @@ def evidence_to_ips(evidence_records: list[Evidence]) -> list[str]:
     return sorted(ips)
 
 
+def evidence_to_resolvers(evidence_records: list[Evidence]) -> list[str]:
+    resolvers: set[str] = set()
+    for ev in evidence_records:
+        if ev.indicator_type != "resolver":
+            continue
+        try:
+            ip = normalize_ip(ev.value)
+        except ValueError:
+            continue
+        if is_public_ip(ip):
+            resolvers.add(ip)
+    return sorted(resolvers)
+
+
 def source_summary(
     results: list[SourceResult],
     domains: list[DomainIndicator],
     urls: list[URLIndicator],
     ips: list[str],
+    resolvers: list[str],
 ) -> list[dict[str, object]]:
     rows = []
     domain_sources = {domain.domain: set(domain.sources) for domain in domains}
     url_sources = {url.url: set(url.sources) for url in urls}
     ip_sources: dict[str, set[str]] = {}
+    resolver_sources: dict[str, set[str]] = {}
     for result in results:
         for ev in result.evidence:
-            if ev.indicator_type != "ip":
+            if ev.indicator_type not in {"ip", "resolver"}:
                 continue
             try:
-                ip = normalize_ip(ev.value.split(":", 1)[0])
+                ip = normalize_ip(
+                    ev.value.split(":", 1)[0] if ev.indicator_type == "ip" else ev.value
+                )
             except ValueError:
                 continue
-            ip_sources.setdefault(ip, set()).add(result.name)
+            if ev.indicator_type == "ip":
+                ip_sources.setdefault(ip, set()).add(result.name)
+            else:
+                resolver_sources.setdefault(ip, set()).add(result.name)
 
     for result in results:
         rows.append(
@@ -106,6 +127,9 @@ def source_summary(
                     1 for url, sources in url_sources.items() if result.name in sources
                 ),
                 "ip_records": sum(1 for ip in ips if result.name in ip_sources.get(ip, set())),
+                "resolver_records": sum(
+                    1 for ip in resolvers if result.name in resolver_sources.get(ip, set())
+                ),
                 "status": "skipped" if result.skipped else "ok",
                 "reason": result.reason or "",
             }
@@ -132,10 +156,13 @@ def generate_dataset(
     evidence_records = [item for result in results for item in result.evidence]
     domains, urls = evidence_to_indicators(evidence_records)
     ips = evidence_to_ips(evidence_records)
-    if live and not domains and not urls and not ips:
+    resolvers = evidence_to_resolvers(evidence_records)
+    if live and not domains and not urls and not ips and not resolvers:
         skipped = [f"{result.name}: {result.reason or 'empty'}" for result in results]
         detail = "; ".join(skipped) if skipped else "no source output"
-        raise RuntimeError(f"live mode produced no domain, URL, or IP indicators: {detail}")
+        raise RuntimeError(
+            f"live mode produced no domain, URL, IP, or resolver indicators: {detail}"
+        )
 
     write_jsonl(output / "normalized" / "domains.jsonl", domains)
     write_jsonl(output / "normalized" / "urls.jsonl", urls)
@@ -163,6 +190,7 @@ def generate_dataset(
         output / "lists" / "malicious-urls.txt", [u.url for u in urls], "malicious URLs"
     )
     write_plain_list(output / "lists" / "malicious-ips.txt", ips, "malicious IPs")
+    write_plain_list(output / "lists" / "open-resolvers.txt", resolvers, "open resolvers")
     write_plain_list(
         output / "lists" / "c2-ips.txt",
         [
@@ -190,6 +218,7 @@ def generate_dataset(
         f"- domains: {len(domains)}",
         f"- urls: {len(urls)}",
         f"- ips: {len(ips)}",
+        f"- open_resolvers: {len(resolvers)}",
     ]
     if skipped:
         report.extend(["", "## Skipped Or Empty Sources"])
@@ -199,14 +228,14 @@ def generate_dataset(
             "",
             "## Source Summary",
             "",
-            "| Source | Evidence | Domains | URLs | IPs | Status | Reason |",
-            "|---|---:|---:|---:|---:|---|---|",
+            "| Source | Evidence | Domains | URLs | IPs | Resolvers | Status | Reason |",
+            "|---|---:|---:|---:|---:|---:|---|---|",
         ]
     )
-    summary_rows = source_summary(results, domains, urls, ips)
+    summary_rows = source_summary(results, domains, urls, ips, resolvers)
     report.extend(
         "| {source} | {evidence_records} | {domain_records} | {url_records} | "
-        "{ip_records} | {status} | {reason} |".format(**row)
+        "{ip_records} | {resolver_records} | {status} | {reason} |".format(**row)
         for row in summary_rows
     )
     (output / "reports").mkdir(parents=True, exist_ok=True)
@@ -221,6 +250,7 @@ def generate_dataset(
         "domains": len(domains),
         "urls": len(urls),
         "ips": len(ips),
+        "resolvers": len(resolvers),
     }
 
 
@@ -260,7 +290,6 @@ def generate_enrichment_outputs(
             lists / "double-flux-domains.txt",
             lists / "fast-flux-domains.txt",
             lists / "newly-registered-risk-domains.txt",
-            lists / "open-resolvers.txt",
             reports / "ct-early-warning-report.md",
             reports / "dga-risk-report.md",
             reports / "fast-flux-report.md",

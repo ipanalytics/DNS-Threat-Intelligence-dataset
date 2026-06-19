@@ -47,6 +47,7 @@ jobs:
             dist/release/c2-domains.txt \
             dist/release/malicious-ips.txt \
             dist/release/c2-ips.txt \
+            dist/release/open-resolvers.txt \
             dist/release/malicious-urls.txt \
             dist/release/domains.jsonl \
             dist/release/urls.jsonl \

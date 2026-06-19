@@ -81,7 +81,7 @@ timestamps, confidence, and a recommended action.
 
 | Area | Capability |
 |---|---|
-| Feed ingestion | URLhaus, ThreatFox, FeodoTracker, OpenPhish |
+| Feed ingestion | URLhaus, ThreatFox, FeodoTracker, OpenPhish, public-dns.info |
 | Normalization | URL parsing, domain extraction, IDN/punycode handling, eTLD+1 approximation, IP validation, defang/refang support |
 | Source accounting | Per-source evidence, domain, URL, IP, status, and skip reason statistics |
 | Publishing | Plain DNS lists, AdGuard DNS filter, JSONL, CSV, Markdown reports, dashboard JSON, GitHub Releases |
@@ -92,19 +92,20 @@ timestamps, confidence, and a recommended action.
 ## Dataset Stats
 
 <!-- DNSINTEL_STATS_START -->
-_Generated: `2026-06-19T06:48:20.285661+00:00`_
+_Generated: `2026-06-19T06:58:08.725583+00:00`_
 
 | Dataset metric | Count |
 |---|---:|
-| Malicious domains | 1573 |
+| Malicious domains | 1580 |
 | Phishing domains | 263 |
-| Malware domains | 1573 |
-| C2 domains | 1109 |
+| Malware domains | 1580 |
+| C2 domains | 1116 |
 | Malicious IPs | 1698 |
 | C2 IPs | 1698 |
+| Open resolvers | 62790 |
 | Malicious URLs | 4293 |
-| AdGuard DNS rules | 4144 |
-| Normalized domain records | 1573 |
+| AdGuard DNS rules | 4152 |
+| Normalized domain records | 1580 |
 | Normalized URL records | 4297 |
 | Enriched files | 1 |
 | Reports | 2 |
@@ -209,6 +210,7 @@ uv run python -m dnsintel.cli dashboard build \
 | `data/lists/c2-domains.txt` | C2 domain list |
 | `data/lists/malicious-ips.txt` | Public malicious IP list from IP-oriented sources |
 | `data/lists/c2-ips.txt` | C2 IP list |
+| `data/lists/open-resolvers.txt` | Public DNS resolver list |
 | `data/lists/malicious-urls.txt` | Malicious URL list |
 | `data/lists/adguard-dns-filter.txt` | AdGuard DNS filter rules |
 | `data/normalized/domains.jsonl` | Normalized domain indicators |

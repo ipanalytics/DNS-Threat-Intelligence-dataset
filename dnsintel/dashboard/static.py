@@ -25,6 +25,7 @@ def build_dashboard(data_dir: Path, output: Path) -> None:
         "c2_domains": _count_lines(data_dir / "lists" / "c2-domains.txt"),
         "malicious_ips": _count_lines(data_dir / "lists" / "malicious-ips.txt"),
         "c2_ips": _count_lines(data_dir / "lists" / "c2-ips.txt"),
+        "open_resolvers": _count_lines(data_dir / "lists" / "open-resolvers.txt"),
         "malicious_urls": _count_lines(data_dir / "lists" / "malicious-urls.txt"),
         "adguard_rules": _count_lines(data_dir / "lists" / "adguard-dns-filter.txt"),
     }
@@ -92,7 +93,8 @@ def build_dashboard(data_dir: Path, output: Path) -> None:
       <h2>Safety Posture</h2>
       <p>
         Live artifacts are generated from public URLhaus, ThreatFox, FeodoTracker,
-        and OpenPhish feeds that are currently enabled without private API keys.
+        OpenPhish, and public-dns.info feeds that are currently enabled without
+        private API keys.
       </p>
     </section>
   </main>

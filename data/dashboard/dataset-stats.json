@@ -1,15 +1,16 @@
 {
-  "adguard_rules": 4144,
-  "c2_domains": 1109,
+  "adguard_rules": 4152,
+  "c2_domains": 1116,
   "c2_ips": 1698,
   "enriched_files": 1,
-  "generated_at": "2026-06-19T06:48:20.467801+00:00",
-  "malicious_domains": 1573,
+  "generated_at": "2026-06-19T06:58:08.773697+00:00",
+  "malicious_domains": 1580,
   "malicious_ips": 1698,
   "malicious_urls": 4293,
-  "malware_domains": 1573,
-  "normalized_domain_records": 1573,
+  "malware_domains": 1580,
+  "normalized_domain_records": 1580,
   "normalized_url_records": 4297,
+  "open_resolvers": 62790,
   "phishing_domains": 263,
   "reports": 2
 }
