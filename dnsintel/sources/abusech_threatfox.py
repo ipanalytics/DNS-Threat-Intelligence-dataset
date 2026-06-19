@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from json import JSONDecodeError
 
 import httpx
@@ -12,6 +13,7 @@ from dnsintel.sources.fixtures import evidence
 class ThreatFoxAdapter:
     name = "threatfox"
     url = "https://threatfox.abuse.ch/export/json/recent/"
+    api_url = "https://threatfox-api.abuse.ch/api/v1/"
 
     def collect(self, live: bool = False, limit: int | None = None) -> SourceResult:
         if live:
@@ -35,14 +37,7 @@ class ThreatFoxAdapter:
 
     def _collect_live(self, limit: int | None = None) -> SourceResult:
         try:
-            response = httpx.get(
-                self.url,
-                timeout=30,
-                follow_redirects=True,
-                headers={"Accept": "application/json"},
-            )
-            response.raise_for_status()
-            payload = response.json()
+            payload = self._fetch_payload()
         except (httpx.HTTPError, JSONDecodeError, ValueError) as exc:
             return SourceResult(
                 name=self.name,
@@ -54,7 +49,7 @@ class ThreatFoxAdapter:
         for row in rows:
             if not isinstance(row, dict):
                 continue
-            value = row.get("ioc_value")
+            value = row.get("ioc_value") or row.get("ioc")
             ioc_type = str(row.get("ioc_type", "")).lower()
             if not isinstance(value, str):
                 continue
@@ -95,6 +90,30 @@ class ThreatFoxAdapter:
             if limit is not None and len(records) >= limit:
                 break
         return SourceResult(name=self.name, evidence=records)
+
+    def _fetch_payload(self) -> object:
+        auth_key = os.environ.get("ABUSECH_AUTH_KEY")
+        if auth_key:
+            response = httpx.post(
+                self.api_url,
+                json={"query": "get_iocs", "days": 7},
+                timeout=30,
+                headers={"Accept": "application/json", "Auth-Key": auth_key},
+            )
+            response.raise_for_status()
+            payload = response.json()
+            if isinstance(payload, dict) and isinstance(payload.get("data"), list):
+                return payload["data"]
+            return payload
+
+        response = httpx.get(
+            self.url,
+            timeout=30,
+            follow_redirects=True,
+            headers={"Accept": "application/json"},
+        )
+        response.raise_for_status()
+        return response.json()
 
 
 def _flatten_rows(payload: object) -> list[dict]:

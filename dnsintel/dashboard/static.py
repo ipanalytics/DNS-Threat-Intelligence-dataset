@@ -23,8 +23,10 @@ def build_dashboard(data_dir: Path, output: Path) -> None:
         "phishing_domains": _count_lines(data_dir / "lists" / "phishing-domains.txt"),
         "malware_domains": _count_lines(data_dir / "lists" / "malware-domains.txt"),
         "c2_domains": _count_lines(data_dir / "lists" / "c2-domains.txt"),
-        "fast_flux_domains": _count_lines(data_dir / "lists" / "fast-flux-domains.txt"),
-        "open_resolvers": _count_lines(data_dir / "lists" / "open-resolvers.txt"),
+        "malicious_ips": _count_lines(data_dir / "lists" / "malicious-ips.txt"),
+        "c2_ips": _count_lines(data_dir / "lists" / "c2-ips.txt"),
+        "malicious_urls": _count_lines(data_dir / "lists" / "malicious-urls.txt"),
+        "adguard_rules": _count_lines(data_dir / "lists" / "adguard-dns-filter.txt"),
     }
     dashboard_dir = data_dir / "dashboard"
     dashboard_dir.mkdir(parents=True, exist_ok=True)
@@ -89,12 +91,8 @@ def build_dashboard(data_dir: Path, output: Path) -> None:
     <section class="card">
       <h2>Safety Posture</h2>
       <p>
-        Sample dashboard data is generated locally. Live feeds are optional and must
-        respect source terms, rate limits, and legal OSINT boundaries.
-      </p>
-      <p>
-        Weak signals such as CT, NRD, DGA suspicion, and public-code mentions require
-        review unless corroborated.
+        Live artifacts are generated from public URLhaus, ThreatFox, FeodoTracker,
+        and OpenPhish feeds that are currently enabled without private API keys.
       </p>
     </section>
   </main>

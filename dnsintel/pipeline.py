@@ -190,10 +190,10 @@ def generate_dataset(
         f"- domains: {len(domains)}",
         f"- urls: {len(urls)}",
         f"- ips: {len(ips)}",
-        "",
-        "## Skipped Or Empty Sources",
     ]
-    report.extend(f"- {result.name}: {result.reason or 'empty'}" for result in skipped)
+    if skipped:
+        report.extend(["", "## Skipped Or Empty Sources"])
+        report.extend(f"- {result.name}: {result.reason or 'empty'}" for result in skipped)
     report.extend(
         [
             "",
@@ -239,83 +239,41 @@ def generate_enrichment_outputs(
     lists.mkdir(parents=True, exist_ok=True)
 
     if live:
-        write_csv(enriched / "domain-ip-links.csv", [])
-        write_csv(enriched / "ip-asn-enrichment.csv", [])
-        write_csv(enriched / "asn-abuse-summary.csv", [])
-        write_plain_list(lists / "dga-confirmed-domains.txt", [], "confirmed DGA domains")
-        write_plain_list(lists / "dga-suspected-domains.txt", [], "suspected DGA domains")
-        write_plain_list(lists / "newly-registered-risk-domains.txt", [], "NRD risk domains")
-        write_plain_list(lists / "ct-suspicious-domains.txt", [], "CT suspicious domains")
-        write_csv(enriched / "domain-risk-features.csv", [])
-        write_csv(enriched / "certificate-links.csv", [])
-        write_plain_list(lists / "fast-flux-domains.txt", [], "fast flux domains")
-        write_plain_list(lists / "double-flux-domains.txt", [], "double flux domains")
-        write_csv(enriched / "fast-flux-features.csv", [])
-        write_jsonl(enriched / "fast-flux-domains.jsonl", [])
-        write_plain_list(lists / "open-resolvers.txt", [], "open resolvers")
-        write_plain_list(
-            lists / "dns-amplification-risk-resolvers.txt",
-            [],
-            "DNS amplification risk resolvers",
-        )
-        write_csv(enriched / "resolver-risk.csv", [])
-        write_plain_list(
+        for path in [
+            enriched / "asn-abuse-summary.csv",
+            enriched / "certificate-links.csv",
+            enriched / "ct-candidates.csv",
+            enriched / "domain-ip-links.csv",
+            enriched / "domain-risk-features.csv",
+            enriched / "fast-flux-domains.jsonl",
+            enriched / "fast-flux-features.csv",
+            enriched / "ip-asn-enrichment.csv",
+            enriched / "public-malware-report-iocs.csv",
+            enriched / "public-malware-report-iocs.jsonl",
+            enriched / "public-osint-evidence.csv",
+            enriched / "resolver-risk.csv",
             lists / "ct-brand-impersonation-candidates.txt",
-            [],
-            "CT brand candidates",
-        )
-        write_csv(enriched / "ct-candidates.csv", [])
-        write_csv(enriched / "public-osint-evidence.csv", [])
-        write_csv(enriched / "public-malware-report-iocs.csv", [])
-        write_jsonl(enriched / "public-malware-report-iocs.jsonl", [])
-        (reports / "top-malicious-asns.md").write_text(
-            "# Top Malicious ASNs\n\n"
-            "ASN enrichment is not emitted without resolver or RDAP evidence.\n",
-            encoding="utf-8",
-        )
-        (reports / "top-malicious-prefixes.md").write_text(
-            "# Top Malicious Prefixes\n\n"
-            "Prefix enrichment is not emitted without resolver or RDAP evidence.\n",
-            encoding="utf-8",
-        )
-        (reports / "nrd-risk-report.md").write_text(
-            "# NRD Risk Report\n\nNo NRD candidates were emitted for this run.\n",
-            encoding="utf-8",
-        )
-        (reports / "dga-risk-report.md").write_text(
-            "# DGA Risk Report\n\nNo DGA candidates were emitted for this run.\n",
-            encoding="utf-8",
-        )
-        (reports / "fast-flux-report.md").write_text(
-            "# Fast-Flux Report\n\nNo fast-flux candidates were emitted for this run.\n",
-            encoding="utf-8",
-        )
-        (reports / "top-flux-asns.md").write_text(
-            "# Top Flux ASNs\n\nNo flux ASN aggregation was emitted for this run.\n",
-            encoding="utf-8",
-        )
-        (reports / "resolver-abuse-report.md").write_text(
-            "# Resolver Abuse Report\n\nNo resolver scan data is emitted by this pipeline.\n",
-            encoding="utf-8",
-        )
-        (reports / "top-open-resolver-asns.md").write_text(
-            "# Top Open Resolver ASNs\n\n"
-            "No open resolver ASN aggregation was emitted for this run.\n",
-            encoding="utf-8",
-        )
-        (reports / "ct-early-warning-report.md").write_text(
-            "# CT Early Warning Report\n\nNo CT candidates were emitted for this run.\n",
-            encoding="utf-8",
-        )
-        (reports / "public-osint-report.md").write_text(
-            "# Public OSINT Report\n\nNo public OSINT enrichment was emitted for this run.\n",
-            encoding="utf-8",
-        )
-        (reports / "public-malware-report-summary.md").write_text(
-            "# Public Malware Report Summary\n\n"
-            "No public malware report IOCs were emitted for this run.\n",
-            encoding="utf-8",
-        )
+            lists / "ct-suspicious-domains.txt",
+            lists / "dga-confirmed-domains.txt",
+            lists / "dga-suspected-domains.txt",
+            lists / "dns-amplification-risk-resolvers.txt",
+            lists / "double-flux-domains.txt",
+            lists / "fast-flux-domains.txt",
+            lists / "newly-registered-risk-domains.txt",
+            lists / "open-resolvers.txt",
+            reports / "ct-early-warning-report.md",
+            reports / "dga-risk-report.md",
+            reports / "fast-flux-report.md",
+            reports / "nrd-risk-report.md",
+            reports / "public-malware-report-summary.md",
+            reports / "public-osint-report.md",
+            reports / "resolver-abuse-report.md",
+            reports / "top-flux-asns.md",
+            reports / "top-malicious-asns.md",
+            reports / "top-malicious-prefixes.md",
+            reports / "top-open-resolver-asns.md",
+        ]:
+            path.unlink(missing_ok=True)
         return
 
     domain_ip_links = [

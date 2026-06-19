@@ -8,6 +8,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      ABUSECH_AUTH_KEY: ${{ secrets.ABUSECH_AUTH_KEY }}
     permissions:
       contents: write
     steps:

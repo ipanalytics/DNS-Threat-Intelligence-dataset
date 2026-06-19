@@ -1,10 +1,5 @@
 domain_records,evidence_records,ip_records,reason,source,status,url_records
-514,17485,0,,urlhaus,ok,3861
+511,17488,0,,urlhaus,ok,3862
 1109,3477,1693,,threatfox,ok,131
-0,0,0,live hash feed is not converted into DNS indicators,malwarebazaar,skipped,0
 0,5,5,,feodotracker,ok,0
-0,0,0,live feed requires a configured PhishTank data source,phishtank,skipped,0
 0,300,0,,openphish,ok,300
-0,0,0,requires token; disabled by default,otx,skipped,0
-0,0,0,live MISP export requires configured instance credentials,misp,skipped,0
-0,0,0,public/auth policy dependent; disabled by default,cert_pl,skipped,0

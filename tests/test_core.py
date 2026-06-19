@@ -98,7 +98,7 @@ def test_public_osint_safety_and_ioc_extraction() -> None:
 
 def test_sample_pipeline_and_cli(tmp_path: Path) -> None:
     counts = generate_sample_dataset(tmp_path)
-    assert counts["domains"] >= 3
+    assert counts["domains"] >= 2
     assert (tmp_path / "lists" / "malicious-domains.txt").exists()
     assert (tmp_path / "enriched" / "fast-flux-features.csv").exists()
     runner = CliRunner()

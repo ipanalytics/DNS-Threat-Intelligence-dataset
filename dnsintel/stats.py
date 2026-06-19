@@ -42,17 +42,11 @@ def collect_dataset_stats(data_dir: Path) -> dict[str, int | str]:
         "c2_ips": count_list_file(lists / "c2-ips.txt"),
         "malicious_urls": count_list_file(lists / "malicious-urls.txt"),
         "adguard_rules": count_list_file(lists / "adguard-dns-filter.txt"),
-        "dga_confirmed_domains": count_list_file(lists / "dga-confirmed-domains.txt"),
-        "dga_suspected_domains": count_list_file(lists / "dga-suspected-domains.txt"),
-        "fast_flux_domains": count_list_file(lists / "fast-flux-domains.txt"),
-        "double_flux_domains": count_list_file(lists / "double-flux-domains.txt"),
-        "open_resolvers": count_list_file(lists / "open-resolvers.txt"),
-        "dns_amplification_risk_resolvers": count_list_file(
-            lists / "dns-amplification-risk-resolvers.txt"
-        ),
         "normalized_domain_records": count_jsonl(normalized / "domains.jsonl"),
         "normalized_url_records": count_jsonl(normalized / "urls.jsonl"),
-        "enriched_files": len(list(enriched.glob("*"))),
+        "enriched_files": len(
+            [path for path in enriched.glob("*") if not path.name.startswith(".")]
+        ),
         "reports": len(list(reports.glob("*.md"))),
     }
     return stats
@@ -68,12 +62,6 @@ def render_stats_markdown(stats: dict[str, int | str]) -> str:
         ("C2 IPs", "c2_ips"),
         ("Malicious URLs", "malicious_urls"),
         ("AdGuard DNS rules", "adguard_rules"),
-        ("DGA confirmed domains", "dga_confirmed_domains"),
-        ("DGA suspected domains", "dga_suspected_domains"),
-        ("Fast-flux domains", "fast_flux_domains"),
-        ("Double-flux domains", "double_flux_domains"),
-        ("Open resolvers", "open_resolvers"),
-        ("DNS amplification-risk resolvers", "dns_amplification_risk_resolvers"),
         ("Normalized domain records", "normalized_domain_records"),
         ("Normalized URL records", "normalized_url_records"),
         ("Enriched files", "enriched_files"),

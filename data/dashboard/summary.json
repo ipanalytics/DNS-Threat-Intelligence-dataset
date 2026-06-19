@@ -1,8 +1,10 @@
 {
+  "adguard_rules": 4144,
   "c2_domains": 1109,
-  "fast_flux_domains": 0,
-  "malicious_domains": 1576,
-  "malware_domains": 1576,
-  "open_resolvers": 0,
+  "c2_ips": 1698,
+  "malicious_domains": 1573,
+  "malicious_ips": 1698,
+  "malicious_urls": 4293,
+  "malware_domains": 1573,
   "phishing_domains": 263
 }

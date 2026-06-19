@@ -40,12 +40,11 @@ artifacts for DNS filtering, SIEM ingestion, analytics, and research workflows.
 
 ## Overview
 
-The project turns heterogeneous public DNS/security intelligence into a
-reproducible dataset with source attribution and infrastructure context.
-Adapters collect public OSINT feeds and report-derived indicators, the
-normalization layer canonicalizes domains, URLs, and IPs, enrichment modules add
-DNS/IP/ASN/RDAP/CT context, and exporters publish lists and structured files for
-downstream systems.
+The project turns public DNS/security intelligence feeds into a reproducible
+dataset with source attribution and operational artifacts. Adapters collect
+public URL, domain, and IP indicators, the normalization layer canonicalizes
+domains, URLs, and IPs, and exporters publish blocklists, JSONL, CSV, reports,
+dashboard data, and GitHub Release assets.
 
 Production workflows collect from live public feeds that do not require
 credentials. Fixture mode is retained for tests, local smoke checks, and adapter
@@ -57,16 +56,13 @@ coverage.
 ## System Behavior
 
 ```text
-public feeds / reports / CT / user data
+public feeds
         |
         v
 source adapters -> Evidence[]
         |
         v
 normalization -> domains / URLs / IPs
-        |
-        v
-enrichment -> DNS snapshots / ASN / prefix / RDAP / CT / OSINT links
         |
         v
 scoring -> confidence / reason codes / recommended action
@@ -85,12 +81,9 @@ timestamps, confidence, and a recommended action.
 
 | Area | Capability |
 |---|---|
-| Feed ingestion | URLhaus, ThreatFox, MalwareBazaar metadata, FeodoTracker, PhishTank, OpenPhish, MISP-style feeds, CERT-style feeds |
+| Feed ingestion | URLhaus, ThreatFox, FeodoTracker, OpenPhish |
 | Normalization | URL parsing, domain extraction, IDN/punycode handling, eTLD+1 approximation, IP validation, defang/refang support |
-| Enrichment | Safe DNS resolver, TTL capture, domain-IP links, ASN/prefix/Geo/RDAP context, shared infrastructure detection |
-| Detection context | DGA lexical scoring, NRD risk signal, CT suspicious pattern detection, popularity baseline, fast-flux scoring |
-| Resolver intelligence | Open resolver and DNS amplification-risk feed processing from configured/legal sources |
-| OSINT/report parsing | Public IOC extraction for domains, URLs, IPs, hashes, CVEs, malware families, campaigns, and short evidence snippets |
+| Source accounting | Per-source evidence, domain, URL, IP, status, and skip reason statistics |
 | Publishing | Plain DNS lists, AdGuard DNS filter, JSONL, CSV, Markdown reports, dashboard JSON, GitHub Releases |
 | Automation | CI, scheduled dataset build, GitHub Pages deployment, release workflow with attached artifacts |
 
@@ -99,28 +92,22 @@ timestamps, confidence, and a recommended action.
 ## Dataset Stats
 
 <!-- DNSINTEL_STATS_START -->
-_Generated: `2026-06-19T06:32:58.931728+00:00`_
+_Generated: `2026-06-19T06:48:20.285661+00:00`_
 
 | Dataset metric | Count |
 |---|---:|
-| Malicious domains | 1576 |
+| Malicious domains | 1573 |
 | Phishing domains | 263 |
-| Malware domains | 1576 |
+| Malware domains | 1573 |
 | C2 domains | 1109 |
 | Malicious IPs | 1698 |
 | C2 IPs | 1698 |
-| Malicious URLs | 4292 |
-| AdGuard DNS rules | 4147 |
-| DGA confirmed domains | 0 |
-| DGA suspected domains | 0 |
-| Fast-flux domains | 0 |
-| Double-flux domains | 0 |
-| Open resolvers | 0 |
-| DNS amplification-risk resolvers | 0 |
-| Normalized domain records | 1576 |
-| Normalized URL records | 4296 |
-| Enriched files | 14 |
-| Reports | 13 |
+| Malicious URLs | 4293 |
+| AdGuard DNS rules | 4144 |
+| Normalized domain records | 1573 |
+| Normalized URL records | 4297 |
+| Enriched files | 1 |
+| Reports | 2 |
 <!-- DNSINTEL_STATS_END -->
 
 The stats block is managed by `scripts/update_stats.py` and refreshed by the
@@ -227,7 +214,7 @@ uv run python -m dnsintel.cli dashboard build \
 | `data/normalized/domains.jsonl` | Normalized domain indicators |
 | `data/normalized/urls.jsonl` | Normalized URL indicators |
 | `data/enriched/source-summary.csv` | Source-level collection statistics |
-| `data/enriched/*.csv` | Enrichment tables for DNS/IP/ASN/CT/flux/resolver/OSINT data |
+| `data/enriched/*.csv` | Source summary and enabled enrichment tables |
 | `data/reports/*.md` | Human-readable update and risk reports |
 | `data/dashboard/*.json` | Dashboard metrics and dataset statistics |
 | `docs/dashboard/index.html` | Static dashboard published through GitHub Pages |
@@ -284,12 +271,12 @@ Core records are represented by Pydantic models under `dnsintel.models`.
 - Live integrations should be enabled per source in `configs/sources.yml`.
 - CI uses deterministic tests; dataset, Pages, and release workflows use live
   public feeds by default.
-- Active DNS logic is limited to bounded DNS lookups with timeout, retry, and
-  rate-limit controls.
-- CT, NRD, DGA-like lexical signals, and public-code mentions are treated as
-  context unless corroborated by stronger evidence.
-- Shared infrastructure detection prevents broad blocking recommendations for
-  CDN, cloud, Pages, and common hosting patterns.
+- Default live builds only publish artifacts backed by currently enabled public
+  feeds.
+- Set `ABUSECH_AUTH_KEY` as a GitHub Actions secret to let ThreatFox use the
+  authenticated abuse.ch API path; public exports remain the fallback.
+- Registration-gated sources are kept out of default runs until credentials and
+  source-specific terms are configured.
 
 ---
 
@@ -359,12 +346,12 @@ time instead of hiding that context in final blocklists.
 ├── dnsintel/             # Python package
 │   ├── sources/          # source adapters
 │   ├── normalize/        # domain, URL, IP normalization
-│   ├── dns/              # safe DNS resolver and snapshot utilities
-│   ├── enrich/           # ASN, Geo, RDAP, shared infrastructure context
-│   ├── ct/               # certificate transparency candidate logic
-│   ├── dga/              # lexical DGA scoring
-│   ├── flux/             # fast-flux feature extraction and scoring
-│   ├── osint/            # public-code/report IOC extraction
+│   ├── dns/              # optional DNS resolver utilities
+│   ├── enrich/           # optional enrichment utilities
+│   ├── ct/               # optional certificate transparency utilities
+│   ├── dga/              # optional lexical DGA scoring
+│   ├── flux/             # optional fast-flux scoring utilities
+│   ├── osint/            # optional public-code/report IOC extraction
 │   ├── scoring/          # confidence and action recommendation logic
 │   ├── storage/          # JSONL, CSV, DuckDB, Parquet helpers
 │   └── dashboard/        # static dashboard generator

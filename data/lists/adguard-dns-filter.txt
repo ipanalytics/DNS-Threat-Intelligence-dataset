@@ -696,7 +696,6 @@
 ||cdn-start.com^
 ||cdn-top.com^
 ||cdn.discordapp.com^
-||cdn.file6.goodid.com^
 ||cdn.imgtree.co^
 ||cdn.jsdelivr.net^
 ||cdn.mensualgeneratr.com^
@@ -3095,7 +3094,6 @@
 ||shopee2449.blogspot.com^
 ||shopee8717.blogspot.com^
 ||should-fat-overhead-zones.trycloudflare.com^
-||shqdown.ggzuhao.com^
 ||shrekf.art^
 ||shrqj.mabanimashin.site^
 ||siase.webermann.hu^
@@ -3143,7 +3141,6 @@
 ||snvgupcvn.bookkade.com^
 ||snyrtistofanrunir.is^
 ||soft-base.org^
-||soft.110route.com^
 ||softcatalog.ru^
 ||softcloud.digital^
 ||softloadup.com^
