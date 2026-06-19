@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from dnsintel.config import load_yaml
 from dnsintel.export.csv import write_csv
 from dnsintel.export.plain import write_plain_list
 from dnsintel.flux.reporting import render_flux_report
@@ -20,6 +21,35 @@ from dnsintel.sources import SourceResult, build_adapters
 from dnsintel.stats import write_stats
 from dnsintel.storage.jsonl_store import write_jsonl
 from dnsintel.utils.time import iso_now
+
+ADGUARD_DNS_PROTECTED_SUFFIXES = {
+    "github.com",
+    "githubusercontent.com",
+    "gitlab.com",
+    "bitbucket.org",
+}
+
+
+def _domain_matches_suffix(domain: str, suffix: str) -> bool:
+    return domain == suffix or domain.endswith(f".{suffix}")
+
+
+def _configured_allowlist_suffixes(path: Path = Path("configs/allowlist.yml")) -> set[str]:
+    if not path.exists():
+        return set()
+    data = load_yaml(path)
+    domains = data.get("domains", [])
+    if not isinstance(domains, list):
+        return set()
+    return {str(domain).strip().lower().rstrip(".") for domain in domains if str(domain).strip()}
+
+
+def should_emit_adguard_dns_rule(domain: str) -> bool:
+    normalized = domain.strip().lower().rstrip(".")
+    protected_suffixes = ADGUARD_DNS_PROTECTED_SUFFIXES | _configured_allowlist_suffixes()
+    return not any(
+        _domain_matches_suffix(normalized, suffix) for suffix in protected_suffixes if suffix
+    )
 
 
 def evidence_to_indicators(
@@ -206,7 +236,11 @@ def generate_dataset(
         ],
         "C2 IPs",
     )
-    adguard_domains = sorted({d.domain for d in domains} | {u.domain for u in urls})
+    adguard_candidates = sorted({d.domain for d in domains} | {u.domain for u in urls})
+    adguard_domains = [
+        domain for domain in adguard_candidates if should_emit_adguard_dns_rule(domain)
+    ]
+    adguard_excluded = len(adguard_candidates) - len(adguard_domains)
     write_plain_list(
         output / "lists" / "adguard-dns-filter.txt",
         [f"||{domain}^" for domain in adguard_domains],
@@ -225,6 +259,7 @@ def generate_dataset(
         f"- urls: {len(urls)}",
         f"- ips: {len(ips)}",
         f"- open_resolvers: {len(resolvers)}",
+        f"- adguard_dns_excluded_shared_infra: {adguard_excluded}",
     ]
     if skipped:
         report.extend(["", "## Skipped Or Empty Sources"])

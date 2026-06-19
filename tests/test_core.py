@@ -14,7 +14,7 @@ from dnsintel.models import DomainIndicator, Evidence
 from dnsintel.normalize import extract_domain, normalize_domain, normalize_url
 from dnsintel.osint.github_search import validate_public_ioc_query
 from dnsintel.osint.ioc_extractor import extract_iocs
-from dnsintel.pipeline import generate_sample_dataset
+from dnsintel.pipeline import generate_sample_dataset, should_emit_adguard_dns_rule
 from dnsintel.resolvers.risk import classify_resolver
 from dnsintel.scoring import score_domain
 
@@ -65,6 +65,13 @@ def test_scoring_shared_infra_and_weak_signal() -> None:
         ],
     )
     assert score_domain(shared).recommended_action == "do_not_block_shared_infra"
+
+
+def test_adguard_dns_export_excludes_shared_code_hosts() -> None:
+    assert not should_emit_adguard_dns_rule("github.com")
+    assert not should_emit_adguard_dns_rule("codeload.github.com")
+    assert not should_emit_adguard_dns_rule("raw.githubusercontent.com")
+    assert should_emit_adguard_dns_rule("malware.example.net")
 
 
 def test_dga_ct_flux_and_resolver_rules() -> None:

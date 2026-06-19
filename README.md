@@ -92,21 +92,21 @@ timestamps, confidence, and a recommended action.
 ## Dataset Stats
 
 <!-- DNSINTEL_STATS_START -->
-_Generated: `2026-06-19T07:05:52.140476+00:00`_
+_Generated: `2026-06-19T14:41:56.204588+00:00`_
 
 | Dataset metric | Count |
 |---|---:|
-| Malicious domains | 1581 |
-| Phishing domains | 263 |
-| Malware domains | 1581 |
-| C2 domains | 1116 |
-| Malicious IPs | 1701 |
-| C2 IPs | 1701 |
-| Open resolvers | 72225 |
-| Malicious URLs | 4293 |
-| AdGuard DNS rules | 4153 |
-| Normalized domain records | 1581 |
-| Normalized URL records | 4297 |
+| Malicious domains | 1607 |
+| Phishing domains | 0 |
+| Malware domains | 1607 |
+| C2 domains | 1118 |
+| Malicious IPs | 1705 |
+| C2 IPs | 1705 |
+| Open resolvers | 62790 |
+| Malicious URLs | 4024 |
+| AdGuard DNS rules | 3911 |
+| Normalized domain records | 1607 |
+| Normalized URL records | 4029 |
 | Enriched files | 1 |
 | Reports | 2 |
 <!-- DNSINTEL_STATS_END -->

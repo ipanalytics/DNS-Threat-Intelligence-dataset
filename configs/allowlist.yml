@@ -1,6 +1,10 @@
 domains:
+  - bitbucket.org
   - example.com
   - example.org
+  - github.com
+  - githubusercontent.com
+  - gitlab.com
   - localhost
   - test.com
 shared_infrastructure_patterns:
@@ -14,4 +18,3 @@ shared_infrastructure_patterns:
   - github.io
   - vercel.app
   - netlify.app
-

@@ -1,11 +1,11 @@
 {
-  "adguard_rules": 4153,
-  "c2_domains": 1116,
-  "c2_ips": 1701,
-  "malicious_domains": 1581,
-  "malicious_ips": 1701,
-  "malicious_urls": 4293,
-  "malware_domains": 1581,
-  "open_resolvers": 72225,
-  "phishing_domains": 263
+  "adguard_rules": 3911,
+  "c2_domains": 1118,
+  "c2_ips": 1705,
+  "malicious_domains": 1607,
+  "malicious_ips": 1705,
+  "malicious_urls": 4024,
+  "malware_domains": 1607,
+  "open_resolvers": 62790,
+  "phishing_domains": 0
 }

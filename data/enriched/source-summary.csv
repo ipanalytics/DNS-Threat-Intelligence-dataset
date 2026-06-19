@@ -1,7 +1,7 @@
 domain_records,evidence_records,ip_records,reason,resolver_records,source,status,url_records
-511,17494,0,,0,urlhaus,ok,3862
-1116,3553,1696,,0,threatfox,ok,131
+515,17783,0,,0,urlhaus,ok,3889
+1118,3569,1700,,0,threatfox,ok,135
 0,5,5,,0,feodotracker,ok,0
-0,300,0,,0,openphish,ok,300
+0,0,0,live fetch failed: ConnectError: [Errno 61] Connection refused,0,openphish,skipped,0
 0,62790,0,,62790,public-dns-info,ok,0
-0,16321,0,,16321,trickest-resolvers,ok,0
+0,0,0,extended fetch failed: ConnectError: [Errno 61] Connection refused; plaintext fetch failed: ConnectError: [Errno 61] Connection refused,0,trickest-resolvers,skipped,0
