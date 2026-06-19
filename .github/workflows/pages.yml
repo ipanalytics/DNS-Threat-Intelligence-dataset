@@ -17,14 +17,10 @@ concurrency:
 jobs:
   build-pages:
     runs-on: ubuntu-latest
-    env:
-      ABUSECH_AUTH_KEY: ${{ secrets.ABUSECH_AUTH_KEY }}
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v5
       - run: uv sync --all-groups
-      - run: uv run python scripts/update_feeds.py --live --output data
-      - run: uv run python scripts/update_stats.py --data-dir data --readme README.md
       - run: uv run python -m dnsintel.cli dashboard build --data-dir data --output docs/dashboard
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
