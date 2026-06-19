@@ -1,5 +1,5 @@
 domain_records,evidence_records,ip_records,reason,resolver_records,source,status,url_records
-510,17489,0,,0,urlhaus,ok,3862
+509,17488,0,,0,urlhaus,ok,3862
 1116,3549,1693,,0,threatfox,ok,131
 0,5,5,,0,feodotracker,ok,0
 0,300,0,,0,openphish,ok,300

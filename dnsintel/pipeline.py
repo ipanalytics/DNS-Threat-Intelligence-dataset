@@ -157,6 +157,12 @@ def generate_dataset(
     domains, urls = evidence_to_indicators(evidence_records)
     ips = evidence_to_ips(evidence_records)
     resolvers = evidence_to_resolvers(evidence_records)
+    if live and any(result.name == "public-dns-info" for result in results) and not resolvers:
+        public_dns = next(result for result in results if result.name == "public-dns-info")
+        raise RuntimeError(
+            "public-dns-info produced no open resolver records: "
+            f"{public_dns.reason or 'empty live feed'}"
+        )
     if live and not domains and not urls and not ips and not resolvers:
         skipped = [f"{result.name}: {result.reason or 'empty'}" for result in results]
         detail = "; ".join(skipped) if skipped else "no source output"
