@@ -7,7 +7,14 @@ from dnsintel.export.plain import write_plain_list
 from dnsintel.flux.reporting import render_flux_report
 from dnsintel.flux.score import score_flux
 from dnsintel.models import DomainIndicator, Evidence, URLIndicator
-from dnsintel.normalize import etld1, extract_domain, normalize_domain, normalize_url
+from dnsintel.normalize import (
+    etld1,
+    extract_domain,
+    is_public_ip,
+    normalize_domain,
+    normalize_ip,
+    normalize_url,
+)
 from dnsintel.scoring import score_domain
 from dnsintel.sources import SourceResult, build_adapters
 from dnsintel.stats import write_stats
@@ -53,6 +60,59 @@ def evidence_to_indicators(
     return [score_domain(item) for item in by_domain.values()], urls
 
 
+def evidence_to_ips(evidence_records: list[Evidence]) -> list[str]:
+    ips: set[str] = set()
+    for ev in evidence_records:
+        if ev.indicator_type != "ip":
+            continue
+        try:
+            ip = normalize_ip(ev.value.split(":", 1)[0])
+        except ValueError:
+            continue
+        if is_public_ip(ip):
+            ips.add(ip)
+    return sorted(ips)
+
+
+def source_summary(
+    results: list[SourceResult],
+    domains: list[DomainIndicator],
+    urls: list[URLIndicator],
+    ips: list[str],
+) -> list[dict[str, object]]:
+    rows = []
+    domain_sources = {domain.domain: set(domain.sources) for domain in domains}
+    url_sources = {url.url: set(url.sources) for url in urls}
+    ip_sources: dict[str, set[str]] = {}
+    for result in results:
+        for ev in result.evidence:
+            if ev.indicator_type != "ip":
+                continue
+            try:
+                ip = normalize_ip(ev.value.split(":", 1)[0])
+            except ValueError:
+                continue
+            ip_sources.setdefault(ip, set()).add(result.name)
+
+    for result in results:
+        rows.append(
+            {
+                "source": result.name,
+                "evidence_records": len(result.evidence),
+                "domain_records": sum(
+                    1 for domain, sources in domain_sources.items() if result.name in sources
+                ),
+                "url_records": sum(
+                    1 for url, sources in url_sources.items() if result.name in sources
+                ),
+                "ip_records": sum(1 for ip in ips if result.name in ip_sources.get(ip, set())),
+                "status": "skipped" if result.skipped else "ok",
+                "reason": result.reason or "",
+            }
+        )
+    return rows
+
+
 def generate_dataset(
     output: Path, live: bool = False, limit_per_source: int | None = None
 ) -> dict[str, int]:
@@ -71,10 +131,11 @@ def generate_dataset(
             )
     evidence_records = [item for result in results for item in result.evidence]
     domains, urls = evidence_to_indicators(evidence_records)
-    if live and not domains and not urls:
+    ips = evidence_to_ips(evidence_records)
+    if live and not domains and not urls and not ips:
         skipped = [f"{result.name}: {result.reason or 'empty'}" for result in results]
         detail = "; ".join(skipped) if skipped else "no source output"
-        raise RuntimeError(f"live mode produced no domain or URL indicators: {detail}")
+        raise RuntimeError(f"live mode produced no domain, URL, or IP indicators: {detail}")
 
     write_jsonl(output / "normalized" / "domains.jsonl", domains)
     write_jsonl(output / "normalized" / "urls.jsonl", urls)
@@ -101,6 +162,16 @@ def generate_dataset(
     write_plain_list(
         output / "lists" / "malicious-urls.txt", [u.url for u in urls], "malicious URLs"
     )
+    write_plain_list(output / "lists" / "malicious-ips.txt", ips, "malicious IPs")
+    write_plain_list(
+        output / "lists" / "c2-ips.txt",
+        [
+            ip
+            for ip in ips
+            if any(ev.value == ip and "c2" in ev.category for ev in evidence_records)
+        ],
+        "C2 IPs",
+    )
     adguard_domains = sorted({d.domain for d in domains} | {u.domain for u in urls})
     write_plain_list(
         output / "lists" / "adguard-dns-filter.txt",
@@ -118,17 +189,39 @@ def generate_dataset(
         f"- evidence_records: {len(evidence_records)}",
         f"- domains: {len(domains)}",
         f"- urls: {len(urls)}",
+        f"- ips: {len(ips)}",
         "",
         "## Skipped Or Empty Sources",
     ]
     report.extend(f"- {result.name}: {result.reason or 'empty'}" for result in skipped)
+    report.extend(
+        [
+            "",
+            "## Source Summary",
+            "",
+            "| Source | Evidence | Domains | URLs | IPs | Status | Reason |",
+            "|---|---:|---:|---:|---:|---|---|",
+        ]
+    )
+    summary_rows = source_summary(results, domains, urls, ips)
+    report.extend(
+        "| {source} | {evidence_records} | {domain_records} | {url_records} | "
+        "{ip_records} | {status} | {reason} |".format(**row)
+        for row in summary_rows
+    )
     (output / "reports").mkdir(parents=True, exist_ok=True)
     (output / "reports" / "update-summary.md").write_text(
         "\n".join(report) + "\n", encoding="utf-8"
     )
+    write_csv(output / "enriched" / "source-summary.csv", summary_rows)
     generate_enrichment_outputs(output, domains=domains, live=live)
     write_stats(output)
-    return {"evidence": len(evidence_records), "domains": len(domains), "urls": len(urls)}
+    return {
+        "evidence": len(evidence_records),
+        "domains": len(domains),
+        "urls": len(urls),
+        "ips": len(ips),
+    }
 
 
 def generate_sample_dataset(output: Path) -> dict[str, int]:

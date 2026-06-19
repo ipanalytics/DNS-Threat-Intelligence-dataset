@@ -99,25 +99,27 @@ timestamps, confidence, and a recommended action.
 ## Dataset Stats
 
 <!-- DNSINTEL_STATS_START -->
-_Generated: `2026-06-19T06:22:56.514474+00:00`_
+_Generated: `2026-06-19T06:32:58.931728+00:00`_
 
 | Dataset metric | Count |
 |---|---:|
-| Malicious domains | 0 |
+| Malicious domains | 1576 |
 | Phishing domains | 263 |
-| Malware domains | 0 |
-| C2 domains | 0 |
-| Malicious URLs | 300 |
-| AdGuard DNS rules | 263 |
+| Malware domains | 1576 |
+| C2 domains | 1109 |
+| Malicious IPs | 1698 |
+| C2 IPs | 1698 |
+| Malicious URLs | 4292 |
+| AdGuard DNS rules | 4147 |
 | DGA confirmed domains | 0 |
 | DGA suspected domains | 0 |
 | Fast-flux domains | 0 |
 | Double-flux domains | 0 |
 | Open resolvers | 0 |
 | DNS amplification-risk resolvers | 0 |
-| Normalized domain records | 0 |
-| Normalized URL records | 300 |
-| Enriched files | 13 |
+| Normalized domain records | 1576 |
+| Normalized URL records | 4296 |
+| Enriched files | 14 |
 | Reports | 13 |
 <!-- DNSINTEL_STATS_END -->
 
@@ -218,10 +220,13 @@ uv run python -m dnsintel.cli dashboard build \
 | `data/lists/phishing-domains.txt` | Phishing domain list |
 | `data/lists/malware-domains.txt` | Malware-associated domain list |
 | `data/lists/c2-domains.txt` | C2 domain list |
+| `data/lists/malicious-ips.txt` | Public malicious IP list from IP-oriented sources |
+| `data/lists/c2-ips.txt` | C2 IP list |
 | `data/lists/malicious-urls.txt` | Malicious URL list |
 | `data/lists/adguard-dns-filter.txt` | AdGuard DNS filter rules |
 | `data/normalized/domains.jsonl` | Normalized domain indicators |
 | `data/normalized/urls.jsonl` | Normalized URL indicators |
+| `data/enriched/source-summary.csv` | Source-level collection statistics |
 | `data/enriched/*.csv` | Enrichment tables for DNS/IP/ASN/CT/flux/resolver/OSINT data |
 | `data/reports/*.md` | Human-readable update and risk reports |
 | `data/dashboard/*.json` | Dashboard metrics and dataset statistics |

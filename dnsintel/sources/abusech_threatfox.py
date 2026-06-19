@@ -4,6 +4,7 @@ from json import JSONDecodeError
 
 import httpx
 
+from dnsintel.normalize import normalize_ip
 from dnsintel.sources.base import SourceResult
 from dnsintel.sources.fixtures import evidence
 
@@ -48,7 +49,7 @@ class ThreatFoxAdapter:
                 skipped=True,
                 reason=f"live fetch failed: {exc.__class__.__name__}: {exc}",
             )
-        rows = payload.values() if isinstance(payload, dict) else payload
+        rows = _flatten_rows(payload)
         records = []
         for row in rows:
             if not isinstance(row, dict):
@@ -66,6 +67,11 @@ class ThreatFoxAdapter:
             elif "ip" in ioc_type:
                 indicator_type = "ip"
                 category = ["c2"]
+                value = str(value).split(":", 1)[0]
+                try:
+                    value = normalize_ip(value)
+                except ValueError:
+                    continue
             else:
                 continue
             confidence_raw = row.get("confidence_level")
@@ -89,3 +95,20 @@ class ThreatFoxAdapter:
             if limit is not None and len(records) >= limit:
                 break
         return SourceResult(name=self.name, evidence=records)
+
+
+def _flatten_rows(payload: object) -> list[dict]:
+    if isinstance(payload, dict):
+        iterable = payload.values()
+    elif isinstance(payload, list):
+        iterable = payload
+    else:
+        return []
+
+    rows: list[dict] = []
+    for item in iterable:
+        if isinstance(item, dict):
+            rows.append(item)
+        elif isinstance(item, list):
+            rows.extend(row for row in item if isinstance(row, dict))
+    return rows

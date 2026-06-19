@@ -43,9 +43,12 @@ jobs:
             dist/release/phishing-domains.txt \
             dist/release/malware-domains.txt \
             dist/release/c2-domains.txt \
+            dist/release/malicious-ips.txt \
+            dist/release/c2-ips.txt \
             dist/release/malicious-urls.txt \
             dist/release/domains.jsonl \
             dist/release/urls.jsonl \
+            dist/release/source-summary.csv \
             dist/release/dnsintel-lists.zip \
             dist/release/dnsintel-enriched.zip \
             dist/release/dataset-stats.json \
