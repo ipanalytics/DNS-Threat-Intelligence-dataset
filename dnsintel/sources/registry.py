@@ -5,6 +5,7 @@ from dnsintel.sources.abusech_threatfox import ThreatFoxAdapter
 from dnsintel.sources.abusech_urlhaus import URLhausAdapter
 from dnsintel.sources.openphish import OpenPhishAdapter
 from dnsintel.sources.public_dns_info import PublicDNSInfoAdapter
+from dnsintel.sources.trickest_resolvers import TrickestResolversAdapter
 
 
 def build_adapters() -> list[object]:
@@ -14,4 +15,5 @@ def build_adapters() -> list[object]:
         FeodoTrackerAdapter(),
         OpenPhishAdapter(),
         PublicDNSInfoAdapter(),
+        TrickestResolversAdapter(),
     ]

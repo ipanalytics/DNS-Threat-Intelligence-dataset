@@ -81,7 +81,7 @@ timestamps, confidence, and a recommended action.
 
 | Area | Capability |
 |---|---|
-| Feed ingestion | URLhaus, ThreatFox, FeodoTracker, OpenPhish, public-dns.info |
+| Feed ingestion | URLhaus, ThreatFox, FeodoTracker, OpenPhish, public-dns.info, trickest/resolvers |
 | Normalization | URL parsing, domain extraction, IDN/punycode handling, eTLD+1 approximation, IP validation, defang/refang support |
 | Source accounting | Per-source evidence, domain, URL, IP, status, and skip reason statistics |
 | Publishing | Plain DNS lists, AdGuard DNS filter, JSONL, CSV, Markdown reports, dashboard JSON, GitHub Releases |
@@ -92,20 +92,20 @@ timestamps, confidence, and a recommended action.
 ## Dataset Stats
 
 <!-- DNSINTEL_STATS_START -->
-_Generated: `2026-06-19T07:02:02.396594+00:00`_
+_Generated: `2026-06-19T07:05:52.140476+00:00`_
 
 | Dataset metric | Count |
 |---|---:|
-| Malicious domains | 1579 |
+| Malicious domains | 1581 |
 | Phishing domains | 263 |
-| Malware domains | 1579 |
+| Malware domains | 1581 |
 | C2 domains | 1116 |
-| Malicious IPs | 1698 |
-| C2 IPs | 1698 |
-| Open resolvers | 62790 |
+| Malicious IPs | 1701 |
+| C2 IPs | 1701 |
+| Open resolvers | 72225 |
 | Malicious URLs | 4293 |
-| AdGuard DNS rules | 4151 |
-| Normalized domain records | 1579 |
+| AdGuard DNS rules | 4153 |
+| Normalized domain records | 1581 |
 | Normalized URL records | 4297 |
 | Enriched files | 1 |
 | Reports | 2 |
