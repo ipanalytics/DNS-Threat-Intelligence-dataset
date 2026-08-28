@@ -34,7 +34,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${{ steps.release_tag.outputs.tag }}" \
+          gh release delete "dataset-current" --cleanup-tag --yes || true
+          gh release create "dataset-current" \
             dist/release/adguard-dns-filter.txt \
             dist/release/malicious-domains.txt \
             dist/release/phishing-domains.txt \
