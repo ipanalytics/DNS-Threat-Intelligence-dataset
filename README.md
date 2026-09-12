@@ -4,6 +4,8 @@
 
 # DNS-Threat-Intelligence-dataset
 
+_Русская версия: [README.ru.md](README.ru.md)_
+
 DNS-Threat-Intelligence-dataset is an open-source DNS threat intelligence
 pipeline for collecting public indicators, normalizing them into typed records,
 enriching infrastructure context, scoring evidence, and publishing operational
